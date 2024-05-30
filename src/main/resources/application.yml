@@ -1,0 +1,50 @@
+server:
+  port: 8080
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: ${DATASOURCE_URL}
+    username: root
+    password: ${DATASOURCE_PASSWORD}
+
+  devtools:
+    restart:
+      enabled: false
+    livereload:
+      enabled: true
+
+  thymeleaf:
+    cache: false
+
+  jpa:
+    generate-ddl: false
+    show-sql: true
+    open-in-view: false
+    hibernate:
+      ddl-auto: none
+    properties:
+      hibernate:
+        default_batch_fetch_size: '100'
+        format_sql: true
+        use_sql_comments: true
+    database: mysql
+    database-platform: org.hibernate.dialect.MySQL8Dialect
+
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${Mail}
+    password: ${AppPassword}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
+          ssl:
+#            trust: true
+            enable: true
+#          timeout: 5000
+#          connectiontimeout: 5000
+#          writetimeout: 5000
