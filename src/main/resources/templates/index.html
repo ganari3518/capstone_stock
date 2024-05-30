@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>주식</title>
+    <link rel="dns-prefetch" href="//unpkg.com" />
+    <link rel="dns-prefetch" href="//cdn.jsdelivr.net" />
+    <link rel="stylesheet" href="https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css">
+    <script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.x.x/dist/alpine.js" defer></script>
+    <style>
+        [x-cloak] {
+            display: none;
+        }
+
+        /* input:checked + svg {
+            display: block;
+        } */
+        [type="checkbox"] {
+            box-sizing: border-box;
+            padding: 0;
+        }
+
+        .form-checkbox {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            -webkit-print-color-adjust: exact;
+            color-adjust: exact;
+            display: inline-block;
+            vertical-align: middle;
+            background-origin: border-box;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            flex-shrink: 0;
+            color: currentColor;
+            background-color: #fff;
+            border-color: #e2e8f0;
+            border-width: 1px;
+            border-radius: 0.25rem;
+            height: 1.2em;
+            width: 1.2em;
+        }
+
+        .form-checkbox:checked {
+            background-image: url("data:image/svg+xml,%3csvg viewBox='0 0 16 16' fill='white' xmlns='http://www.w3.org/2000/svg'%3e%3cpath d='M5.707 7.293a1 1 0 0 0-1.414 1.414l2 2a1 1 0 0 0 1.414 0l4-4a1 1 0 0 0-1.414-1.414L7 8.586 5.707 7.293z'/%3e%3c/svg%3e");
+            border-color: transparent;
+            background-color: currentColor;
+            background-size: 100% 100%;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+    </style>
+
+</head>
+<body>
+<!-- partial:index.partial.html -->
+<body class="antialiased sans-serif bg-gray-200">
+<div class="container mx-auto py-6 px-4" x-data="datatables()" x-cloak>
+    <div style="height: 200px">
+        <div class="flex justify-end items-center">
+            <a class="order-last" href="http://ganari3518.iptime.org:8080/search" style="margin-right: 3px">
+                <div class="inline-flex items-center p-2 bg-white" style="border: 1px solid #e2e8f0;  border-radius: 8px; width:40px; height:40px;">
+                        <!--            <a href="http://172.30.1.27:8080/search">-->
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-gray-400" viewBox="0 0 24 24"
+                             stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"
+                             stroke-linejoin="round">
+                            <rect x="0" y="0" width="24" height="24" stroke="none"></rect>
+                            <circle cx="10" cy="10" r="7" />
+                            <line x1="21" y1="21" x2="15" y2="15" />
+                        </svg>
+                </div>
+            </a>
+
+            <div style="margin-right: 4px">
+                <div class="shadow rounded-lg flex">
+                    <div class="relative">
+                        <button @click.prevent="open = !open"
+                                class="rounded-lg inline-flex items-center bg-white hover:text-blue-500 focus:outline-none focus:shadow-outline text-gray-500 font-semibold py-2 px-2 md:px-4">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 md:hidden" viewBox="0 0 24 24"
+                                 stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"
+                                 stroke-linejoin="round">
+                                <rect x="0" y="0" width="24" height="24" stroke="none"></rect>
+                                <path
+                                        d="M5.5 5h13a1 1 0 0 1 0.5 1.5L14 12L14 19L10 16L10 12L5 6.5a1 1 0 0 1 0.5 -1.5" />
+                            </svg>
+                            <span class="hidden md:block">Display</span>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 ml-1" width="24" height="24"
+                                 viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
+                                 stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="0" y="0" width="24" height="24" stroke="none"></rect>
+                                <polyline points="6 9 12 15 18 9" />
+                            </svg>
+                        </button>
+
+                        <div x-show="open" @click.away="open = false"
+                             class="z-40 absolute top-0 right-0 w-40 bg-white rounded-lg shadow-lg mt-12 -mr-1 block py-1 overflow-hidden">
+                            <template x-for="heading in headings">
+                                <label
+                                        class="flex justify-start items-center text-truncate hover:bg-gray-100 px-4 py-2">
+                                    <div class="text-teal-600 mr-3">
+                                        <input type="checkbox" class="form-checkbox focus:outline-none focus:shadow-outline" checked @click="toggleColumn(heading.key)">
+                                    </div>
+                                    <div class="select-none text-gray-700" x-text="heading.value"></div>
+                                </label>
+                            </template>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <a class="order-last" href="http://ganari3518.iptime.org:8080/setting/list.do">
+                <div class="inline-flex items-center p-4 text-gray-500 font-semibold bg-white" style="width:55px; height:40px;border: 1px solid #e2e8f0;border-radius: 8px;">
+                    <span>My</span>
+                </div>
+            </a>
+        </div>
+
+        <div id="exchange" style="border: 1px solid #e2e8f0;margin: 10px; border-radius: 5px;height: 70%;display: flex;gap: 40px;justify-content: center;padding: 12px 0;">
+<!--        <div id="exchange" style="height: 70%;display: flex;gap: 40px;justify-content: center;padding: 12px 0;">-->
+            <template x-for="exchange in exchanges" :key="exchange.Name">
+                <div style="display: inline-block;background-color: white;padding: 12px 18px;border-radius: 12px;width: 146px;">
+                    <div x-text="exchange.Name" style="font-size: 12px"></div>
+                    <div x-text="exchange.Close" style="font-weight: 700; font-size: 18px"></div>
+                </div>
+            </template>
+        </div>
+    </div>
+
+    <input type="button" id="init" @click="init()">
+    <div x-show="selectedRows.length" class="bg-teal-200 fixed top-0 left-0 right-0 z-40 w-full shadow">
+        <div class="container mx-auto px-4 py-4">
+            <div class="flex md:items-center">
+                <div class="mr-4 flex-shrink-0">
+                    <svg class="h-8 w-8 text-teal-600"  viewBox="0 0 20 20" fill="currentColor">  <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/></svg>
+                </div>
+                <div x-html="selectedRows.length + ' rows are selected'" class="text-teal-800 text-lg"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="overflow-x-auto bg-white rounded-lg shadow overflow-y-auto relative"
+         style="height: 405px;">
+        <table class="border-collapse table-auto w-full whitespace-no-wrap bg-white table-striped relative">
+            <thead>
+            <tr class="text-left">
+                <template x-for="heading in headings">
+                    <th class="bg-gray-100 sticky top-0 border-b border-gray-200 px-6 py-2 text-gray-600 font-bold tracking-wider uppercase text-xs"
+                        x-text="heading.value" :x-ref="heading.key" :class="{ [heading.key]: true }"></th>
+                </template>
+            </tr>
+            </thead>
+            <tbody>
+            <template x-for="stock in stocks" :key="stock.Code">
+                <tr @click="getRowInfo(stock.Code, stock.Name)">
+                    <td class="border-dashed border-t border-gray-200 Code">
+                        <span class="text-gray-700 px-6 py-3 flex items-center" x-text="stock.Code"></span>
+                    </td>
+                    <td class="border-dashed border-t border-gray-200 Name">
+                        <span class="text-gray-700 px-6 py-3 flex items-center" x-text="stock.Name"></span>
+                    </td>
+                    <td class="border-dashed border-t border-gray-200 Close">
+                        <span class="text-gray-700 px-6 py-3 flex items-center" x-text="stock.Close"></span>
+                    </td>
+                    <td class="border-dashed border-t border-gray-200 ChagesRatio">
+                        <span class="text-gray-700 px-6 py-3 flex items-center" x-text="stock.ChagesRatio"></span>
+                    </td>
+                    <td class="border-dashed border-t border-gray-200 Marcap">
+                        <span class="text-gray-700 px-6 py-3 flex items-center" x-text="stock.Marcap"></span>
+                    </td>
+                    <td class="border-dashed border-t border-gray-200 Volume">
+                        <span class="text-gray-700 px-6 py-3 flex items-center" x-text="stock.Volume"></span>
+                    </td>
+                    <td class="border-dashed border-t border-gray-200 Amount">
+                        <span class="text-gray-700 px-6 py-3 flex items-center" x-text="stock.Amount"></span>
+                    </td>
+                </tr>
+            </template>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    window.addEventListener('DOMContentLoaded',function (){
+        document.getElementById('init').click();
+    });
+
+    function datatables() {
+        // const ip = "192.168.0.9:8080";
+        const ip = "172.30.1.27:8080";
+        return {
+            headings: [
+                {
+                    'key': 'Code',
+                    'value': '종목코드'
+                },
+                {
+                    'key': 'Name',
+                    'value': '종목명'
+                },
+                {
+                    'key': 'Close',
+                    'value': '현재가'
+                },
+                {
+                    'key': 'ChagesRatio',
+                    'value': '등락률'
+                },
+                {
+                    'key': 'Marcap',
+                    'value': '시가총액'
+                },
+                {
+                    'key': 'Volume',
+                    'value': '거래량'
+                },
+                {
+                    'key': 'Amount',
+                    'value': '거래대금'
+                }
+            ],
+            stocks: [],
+            exchanges: [],
+            selectedRows: [],
+            open: false,
+
+            init(){
+                let uri = "http://ganari3518.iptime.org:8080/caps/info/top10";
+                // let uri = `http://${ip}/caps/info/top10`;
+                fetch(uri)
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('response error');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        for (let i = 0; i < data.length; i++){
+                            let Obj = data[i];
+                            this.stocks.push(Obj);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('There was a problem with the fetch operation:', error);
+                    });
+
+                uri = "http://ganari3518.iptime.org:8080/caps/info/exchanges";
+                fetch(uri)
+                    .then(response => {
+                        if(!response.ok){
+                            throw new Error('response error');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        for(let i = 0; i < data.length; i++){
+                            let Obj = data[i];
+                            this.exchanges.push(Obj);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('There was a problem with the fetch operation:', error);
+                    })
+            },
+
+            toggleColumn(key) {
+                // Note: All td must have the same class name as the headings key!
+                let columns = document.querySelectorAll('.' + key);
+
+                if (this.$refs[key].classList.contains('hidden') && this.$refs[key].classList.contains(key)) {
+                    columns.forEach(column => {
+                        column.classList.remove('hidden');
+                    });
+                } else {
+                    columns.forEach(column => {
+                        column.classList.add('hidden');
+                    });
+                }
+            },
+
+            getRowInfo(Code, Name){
+                location.href = '/stock'+`?Code=${Code}&Name=${Name}`;
+            },
+
+            getRowDetail($event, id) {
+                let rows = this.selectedRows;
+
+                if (rows.includes(id)) {
+                    let index = rows.indexOf(id);
+                    rows.splice(index, 1);
+                } else {
+                    rows.push(id);
+                }
+            },
+
+            selectAllCheckbox($event) {
+                let columns = document.querySelectorAll('.rowCheckbox');
+
+                this.selectedRows = [];
+
+                if ($event.target.checked == true) {
+                    columns.forEach(column => {
+                        column.checked = true
+                        this.selectedRows.push(parseInt(column.name))
+                    });
+                } else {
+                    columns.forEach(column => {
+                        column.checked = false
+                    });
+                    this.selectedRows = [];
+                }
+            }
+
+            //Todo 얘도 오전 9시 부터 오후 3시까지 실시간 반영이 되야함. 일단 해보고 느리면 python연산을 줄이던가 해야될거 같음.
+        }
+    }
+</script>
+</body>
+<!-- partial -->
+
+</body>
+</html>

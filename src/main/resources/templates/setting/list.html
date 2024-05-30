@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="layout/basic">
+<th:block layout:fragment="title">
+    <title>사용자 설정</title>
+</th:block>
+
+<th:block layout:fragment="content">
+    <div class="content">
+        <section>
+            <!--/* 리스트 */-->
+            <table class="tb tb_col">
+                <colgroup>
+                    <col style="width:20%;"/>
+                    <col style="width:auto;"/>
+                    <col style="width:20%;"/>
+                </colgroup>
+                <thead>
+                <tr>
+                    <th scope="col">서비스</th>
+                    <th scope="col">등록키</th>
+                    <th scope="col">등록일</th>
+                </tr>
+                </thead>
+                <tbody id="list">
+
+                </tbody>
+            </table>
+
+            <!--/* 버튼 */-->
+            <p class="btn_set tr">
+                <a th:href="@{/key/write.do}" class="btns btn_st3 btn_mid">등록하기</a>
+            </p>
+        </section>
+    </div>
+</th:block>
+<th:block layout:fragment="script">
+    <script th:inline="javascript">
+        window.onload = () => {
+            findAllPost();
+        }
+
+        function findAllPost() {
+            const email = [[${session.loginMember.email}]];
+            const auth = [[${session.loginMember.mailauth}]];
+
+            $.ajax({
+                url : '/list/key',
+                type : 'POST',
+                dataType : 'json',
+                data : {
+                    email: email,
+                },
+                async : false,
+                success : function (response) {
+                    if (response != null && response.length != 0){
+                        if(auth){
+                            for(let i = 0; i < response.length; i++){
+                                let Obj = response[i];
+                                drawList(Obj);
+                            }
+                        } else {
+                            document.getElementById('list').innerHTML = '<td colspan="6"><div className="no_data_msg">이메일 인증을 받지 않은 계정입니다. 관리자에게 문의해주세요.</div></td>';
+                        }
+                    } else{
+                        document.getElementById('list').innerHTML = '<td colspan="6"><div className="no_data_msg">검색된 결과가 없습니다.</div></td>';
+                    }
+                },
+                error : function (request, status, error) {
+                    console.error('There was a problem with the fetch operation:', error);
+                }
+            })
+        }
+
+        function drawList(list) {
+            let html = '';
+            html += `
+                    <tr onclick="goViewPage(${list.id})">
+                        <td>${list.service}</td>
+                        <td>${list.apikey}</td>
+                        <td>${dayjs(list.createdDate).format('YYYY-MM-DD HH:mm')}</td>
+                    </tr>
+                `;
+            document.getElementById('list').innerHTML += html;
+        }
+
+        function goViewPage(id) {
+            const queryString = (location.search) ? location.search + `&id=${id}` : `?id=${id}`;
+            location.href = '/key/view.do' + queryString;
+        }
+    </script>
+</th:block>
+</html>

@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="layout/basic">
+<th:block layout:fragment="title">
+    <title>사용자 설정</title>
+</th:block>
+
+<th:block layout:fragment="content">
+    <div class="content">
+        <section>
+            <form id="saveForm" method="post" autocomplete="off" enctype="multipart/form-data">
+                <!--/* 수정인 경우, 서버로 전달할 번호 (PK) */-->
+                <input type="hidden" id="id" name="id" th:if="${post != null}" th:value="${post.id}" />
+
+                <!--/* 서버로 전달할 서비스 값 */-->
+                <input type="hidden" id="service" name="service" />
+                <input type="hidden" id="email" name="email"/>
+
+                <!--/* 삭제 처리할 파일 번호 */-->
+                <input type="hidden" id="removeFileIds" name="removeFileIds" />
+
+                <table class="tb tb_row">
+                    <colgroup>
+                        <col style="width:15%;" /><col style="width:35%;" /><col style="width:15%;" /><col style="width:35%;" />
+                    </colgroup>
+                    <tbody>
+                    <tr>
+                        <th scope="row">서비스<span class="es">필수 입력</span></th>
+                        <td>
+                            <span class="chkbox"><input type="checkbox" id="isDiscord" name="isDiscord" class="chk" onchange="toggleCheckbox('isDiscord')"/><i></i><label for="isDiscord"> 디스코드</label></span>
+                            <span class="chkbox"><input type="checkbox" id="isTelegram" name="isTelegram" class="chk" onchange="toggleCheckbox('isTelegram')"/><i></i><label for="isTelegram"> 텔레그램</label></span>
+                        </td>
+
+                        <th scope="row">등록일</th>
+                        <td colspan="3"><input type="text" id="createdDate" name="createdDate" readonly /></td>
+                    </tr>
+
+                    <tr>
+                        <th>API키<span class="es">필수 입력</span></th>
+                        <td colspan="3"><input type="text" id="apikey" name="apikey" maxlength="50" placeholder="API키를 입력해주세요." /></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </form>
+            <p class="btn_set">
+                <button type="button" id="saveBtn" onclick="savePost();" class="btns btn_st3 btn_mid">저장</button>
+                <button type="button" onclick="goListPage()"; class="btns btn_bdr3 btn_mid">뒤로</button>
+            </p>
+        </section>
+    </div>
+</th:block>
+<th:block layout:fragment="script">
+    <script th:inline="javascript">
+
+        window.onload = () => {
+            render();
+        }
+
+        function toggleCheckbox(clickedCheckboxId) {
+            var discordCheckbox = document.getElementById('isDiscord');
+            var telegramCheckbox = document.getElementById('isTelegram');
+
+            if (clickedCheckboxId === 'isDiscord' && discordCheckbox.checked) {
+                telegramCheckbox.disabled = true;
+            } else if (clickedCheckboxId === 'isTelegram' && telegramCheckbox.checked) {
+                discordCheckbox.disabled = true;
+            } else {
+                telegramCheckbox.disabled = false;
+                discordCheckbox.disabled = false;
+            }
+        }
+
+        function render(){
+            const post = [[ ${post} ]];
+
+            if(!post){
+                initCreatedDate();
+                return false;
+            }
+
+            const form = document.getElementById('saveForm');
+            const fields = ['service', 'apikey'];
+            form.createdDate.value = dayjs(post.createdDate).format('YYYY-MM-DD HH:mm');
+
+            fields.forEach(field => {
+                form[field].value = post[field];
+                if(field.includes("service")){
+                    let str = post[field].toString();
+                    if(decodeURIComponent(str).includes('디스코드')){
+                        form.isDiscord.checked = true;
+                        form.isTelegram.checked = false;
+                        form.isTelegram.disabled = true;
+                    } else if(decodeURIComponent(str).includes('텔레그램')){
+                        form.isTelegram.checked = true;
+                        form.isDiscord.checked = false;
+                        form.isDiscord.disabled = true;
+                    } else{
+                        form.isTelegram.checked = false;
+                        form.isDiscord.checked = false;
+                        toggleCheckbox('isTelegram');
+                    }
+                }
+            });
+        }
+
+        function initCreatedDate() {
+            document.getElementById('createdDate').value = dayjs().format('YYYY-MM-DD');
+        }
+
+
+        // 저장(수정)
+        function savePost() {
+            const form = document.getElementById('saveForm');
+
+            if(form.isDiscord.checked){
+                form.service.value = "디스코드";
+            } else{
+                form.service.value = "텔레그램";
+            }
+            const email = [[${session.loginMember.email}]];
+            form.email.value = email;
+
+            let queryString = new URLSearchParams(location.search);
+            queryString.delete('id');
+
+            validInfo(form);
+
+            form.action = [[ ${post == null} ]] ? '/key/save.do' : '/key/update.do' + '?' + queryString.toString();
+            form.submit();
+        }
+
+        function goListPage(){
+            location.href = '/setting/list.do';
+        }
+
+        function validInfo(form){
+            const fields = [form.service, form.apikey];
+            const fieldNames = ['서비스','API키'];
+
+            for(let i = 0, len = fields.length; i < len; i++){
+                isValid(fields[i], fieldNames[i]);
+            }
+
+            if(form.isDiscord.checked == false && form.isTelegram.checked == false){
+                alert("서비스를 체크 해주세요.");
+                throw new Error("서비스를 체크 해주세요.");
+            }
+        }
+
+    </script>
+</th:block>
+</html>

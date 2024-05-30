@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="layout/basic">
+<th:block layout:fragment="title">
+  <title>사용자 설정</title>
+</th:block>
+
+<th:block layout:fragment="content">
+  <div class="content">
+    <section>
+      <table class="tb tb_row">
+        <colgroup>
+          <col style="width:10%;" /><col style="width:23%;" /><col style="width:10%;" /><col style="width:23%;" />
+        </colgroup>
+        <tbody>
+        <tr>
+          <th scope="col">서비스</th>
+          <td>[[${post.service}]]</td>
+        </tr>
+        <tr>
+          <th scope="col">등록키</th>
+          <td>[[${post.apikey}]]</td>
+        </tr>
+        </tbody>
+      </table>
+      <p class="btn_set">
+      <p class="btn_set">
+        <button type="button" onclick="goWritePage();" class="btns btn_bdr4 btn_mid">수정</button>
+        <button type="button" onclick="deletePost();" class="btns btn_bdr1 btn_mid">삭제</button>
+        <button type="button" onclick="goListPage();" class="btns btn_bdr3 btn_mid">뒤로</button>
+      </p>
+      </p>
+    </section>
+  </div>
+</th:block>
+
+<th:block layout:fragment="script">
+  <script th:inline="javascript">
+    function deletePost(){
+      if(!confirm('등록한 API를 삭제하시겠습니까?')){
+        return false;
+      }
+
+      let inputHtml = '';
+
+      new URLSearchParams(location.search).forEach((value, key) => {
+        inputHtml += `<input type="hidden" name="${key}" value="${value}"/>`;
+      })
+
+      const formHtml = `<form id="deleteForm" action="/key/delete.do" method="post">
+                            ${inputHtml}
+                        </form>
+      `;
+      const doc = new DOMParser().parseFromString(formHtml, 'text/html');
+      const form = doc.body.firstChild;
+      document.body.append(form);
+      document.getElementById('deleteForm').submit();
+    }
+
+    function goWritePage(){
+      location.href = '/key/write.do' + location.search;
+    }
+
+    function goListPage(){
+      const queryString = new URLSearchParams(location.search);
+      queryString.delete('id');
+      location.href = '/setting/list.do' + '?' + queryString.toString();
+    }
+
+  </script>
+</th:block>
+</html>

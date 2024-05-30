@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+  <title>검색</title>
+  <link href="https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css" rel="stylesheet"/>
+  <script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.x.x/dist/alpine.min.js" defer></script>
+</head>
+<body class="bg-gray-200 px-3 font-sans leading-normal tracking-normal">
+<div x-data="loadStocks()">
+  <div class="container pt-4 mx-auto flex items-center">
+    <a href="http://ganari3518.iptime.org:8080">
+      <svg class="w-5 mr-2" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg" style="width: 25px;height: 25px">
+        <path fill-rule="evenodd" d="M7.707 14.707a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l2.293 2.293a1 1 0 010 1.414z" clip-rule="evenodd"></path>
+      </svg>
+    </a>
+    <input x-ref="searchField" x-model="search" x-on:keydown.window.prevent.slash="$refs.searchField.focus()" placeholder="Search..." type="search" class="block w-full bg-gray-100 focus:outline-none focus:bg-white focus:shadow text-gray-700 font-bold rounded-lg px-4 py-3">
+  </div>
+  <div class="mt-4 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+    <template x-for="item in filteredStocks" :key="item">
+      <div x-on:click="getItemInfo(item.Name, item.Code)" class="bg-gray-100 flex items-center shadow hover:bg-indigo-100 hover:shadow-lg hover:rounded transition duration-150 ease-in-out transform hover:scale-105 p-3">
+        <div class="text-sm">
+          <p class="text-gray-900 leading-none" x-text="item.Name"></p>
+          <p class="text-gray-600" x-text="item.Code"></p>
+        </div>
+      </div>
+    </template>
+  </div>
+</div>
+<script>
+  var sourceData = [];
+  const ip = "172.30.1.27:8080";
+  uri = "http://ganari3518.iptime.org:8080/caps/info/stocks";
+  // uri = `http://${ip}/caps/info/stocks`;
+  fetch(uri)
+          .then(response => {
+            if (!response.ok) {
+              throw new Error('response error');
+            }
+            return response.json();
+          })
+          .then(data => {
+            for (let i = 0; i < data.length; i++){
+              let Obj = data[i];
+              this.sourceData.push(Obj);
+            }
+          })
+          .catch(error => {
+            console.error('There was a problem with the fetch operation:', error);
+          });
+
+  function regNorS(s){
+    return isNaN(s);
+  }
+
+  function loadStocks() {
+    return {
+      search: '',
+      Data: sourceData,
+      get filteredStocks() {
+        if (this.search === '') {
+          return this.Data
+        }
+        return this.Data.filter(item => {
+          // console.log(item.Code.toLowerCase().includes(this.search.toLowerCase()));
+          if(!regNorS(this.search)){
+            return item.Code.includes(this.search);
+          }
+          else {
+            return item.Name.toLowerCase().includes(this.search.toLowerCase());
+          }
+        })
+      },
+      getItemInfo(Name, Code) {
+        window.location.href = '/stock'+`?Code=${Code}&Name=${Name}`;
+      }
+    }
+  }
+</script>
+</body>
+</html>
