@@ -61,7 +61,7 @@
 <div class="container mx-auto py-6 px-4" x-data="datatables()" x-cloak>
     <div style="height: 200px">
         <div class="flex justify-end items-center">
-            <a class="order-last" href="http://ganari3518.iptime.org:8080/search" style="margin-right: 3px">
+            <a class="order-last" href="http://ganari3518.iptime.org/search" style="margin-right: 3px">
                 <div class="inline-flex items-center p-2 bg-white" style="border: 1px solid #e2e8f0;  border-radius: 8px; width:40px; height:40px;">
                         <!--            <a href="http://172.30.1.27:8080/search">-->
                         <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-gray-400" viewBox="0 0 24 24"
@@ -111,7 +111,7 @@
                 </div>
             </div>
 
-            <a class="order-last" href="http://ganari3518.iptime.org:8080/setting/list.do">
+            <a class="order-last" href="http://ganari3518.iptime.org/setting/list.do">
                 <div class="inline-flex items-center p-4 text-gray-500 font-semibold bg-white" style="width:55px; height:40px;border: 1px solid #e2e8f0;border-radius: 8px;">
                     <span>My</span>
                 </div>
@@ -228,7 +228,7 @@
             open: false,
 
             init(){
-                let uri = "http://ganari3518.iptime.org:8080/caps/info/top10";
+                let uri = "http://ganari3518.iptime.org/caps/info/top10";
                 // let uri = `http://${ip}/caps/info/top10`;
                 fetch(uri)
                     .then(response => {
@@ -247,7 +247,7 @@
                         console.error('There was a problem with the fetch operation:', error);
                     });
 
-                uri = "http://ganari3518.iptime.org:8080/caps/info/exchanges";
+                uri = "http://ganari3518.iptime.org/caps/info/exchanges";
                 fetch(uri)
                     .then(response => {
                         if(!response.ok){

@@ -36,7 +36,11 @@
 
                     <tr>
                         <th>API키<span class="es">필수 입력</span></th>
-                        <td colspan="3"><input type="text" id="apikey" name="apikey" maxlength="50" placeholder="API키를 입력해주세요." /></td>
+                        <td colspan="3"><input type="text" id="apikey" name="apikey" maxlength="200" placeholder="API키를 입력해주세요." /></td>
+                    </tr>
+
+                    <tr>
+                        <span style="color: red">&lt;주의사항&gt;</span>디스코드는 웹훅을 그대로 작성 해주시고, 텔레그램은 api키/chatid 형식으로 작성 해주세요.
                     </tr>
                     </tbody>
                 </table>
@@ -143,6 +147,22 @@
             if(form.isDiscord.checked == false && form.isTelegram.checked == false){
                 alert("서비스를 체크 해주세요.");
                 throw new Error("서비스를 체크 해주세요.");
+            }
+
+            const apikey = document.getElementById("apikey").value;
+
+            if(form.isTelegram.checked == true){
+                let regex = /^[0-9]{8,10}:[a-zA-Z0-9_-]{35}\/[0-9]+$/;
+                if(!regex.test(apikey)){
+                    alert("api키/chatid 형식으로 작성 해주세요.")
+                    throw new Error("api키/chatid 형식으로 작성 해주세요.")
+                }
+            } else if(form.isDiscord.checked == true){
+                let regex = /^https:\/\/discord\.com\/api\/webhooks\/[0-9]+\/[a-zA-Z0-9_-]+$/;
+                if(!regex.test(apikey)){
+                    alert("웹훅 형식에 맞게 작성 해주세요.");
+                    throw new Error("웹훅 형식에 맞게 작성 해주세요.");
+                }
             }
         }
 

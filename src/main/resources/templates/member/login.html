@@ -175,7 +175,7 @@
     const form = document.getElementById('signupForm');
     const email = document.querySelector('#signupForm input[name="email"]');
     const code = document.querySelector('#signupForm input[name="mailkey"]');
-    fetch(`http://ganari3518.iptime.org:8080/caps/mail/cancel`,{
+    fetch(`http://ganari3518.iptime.org/caps/mail/cancel`,{
       method: "POST",
       headers:{
         "Content-Type": "application/json"
@@ -241,7 +241,7 @@
       return;
     }
 
-    fetch("http://ganari3518.iptime.org:8080/caps/mail/send",{
+    fetch("http://ganari3518.iptime.org/caps/mail/send",{
       method: "POST",
       headers:{
         "Content-Type": "application/json"
@@ -266,7 +266,7 @@
   function checkEmail(){
     const email = document.querySelector('#signupForm input[name="email"]');
     const code = document.querySelector('#signupForm input[name="mailkey"]');
-    fetch(`http://ganari3518.iptime.org:8080/caps/mail/verify`,{
+    fetch(`http://ganari3518.iptime.org/caps/mail/verify`,{
       method: "POST",
       headers:{
         "Content-Type": "application/json"
@@ -357,7 +357,7 @@
     params['mailkey'] = mailkey;
 
     // 3. Save API 호출
-    var res = callApi('http://ganari3518.iptime.org:8080/member/signup', 'post', params);
+    var res = callApi('http://ganari3518.iptime.org/member/signup', 'post', params);
     if(res == null){
       alert('가입 중 오류가 발생했습니다!\n다시 회원 가입을 진행해주세요.');
       closeSignupPopup();
