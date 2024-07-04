@@ -7,6 +7,7 @@ import com.syu.capstone_stock.repositry.MemberRepository;
 import com.syu.capstone_stock.util.EncryptionUtil;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -19,9 +20,13 @@ public class MemberService {
     private Member m;
 
     @Transactional
-    public Long saveMember(final MemberRequestDto params){
+    public ResponseEntity<?> saveMember(final MemberRequestDto params){
         if(mailRepository.findByEmailAndMailauth(params.getEmail(), true) != null) {
-            return memberRepository.save(params.toEntity()).getId();
+            if(memberRepository.save(params.toEntity()).getId() > 0){
+                return ResponseEntity.ok().body("회원가입이 완료 되었습니다.");
+            } else {
+                return ResponseEntity.badRequest().body("잘못된 요청입니다.");
+            }
         } else {
             return null;
         }
