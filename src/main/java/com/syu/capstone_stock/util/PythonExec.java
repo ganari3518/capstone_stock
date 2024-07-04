@@ -1,6 +1,8 @@
 package com.syu.capstone_stock.util;
 
 import org.zeroturnaround.exec.ProcessExecutor;
+import org.zeroturnaround.exec.ProcessResult;
+import org.zeroturnaround.exec.stream.LogOutputStream;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -67,6 +69,32 @@ public class PythonExec {
             return new ProcessExecutor().command(cmd)
                     .readOutput(true).execute()
                     .outputUTF8();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        } catch (TimeoutException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static void execSchedule(){
+        List<String> cmd = new ArrayList<>();
+        cmd.add("python");
+        cmd.add(System.getProperty("user.dir") + "/src/main/resources/python/" + "scheduler.py");
+        try{
+            ProcessResult res = new ProcessExecutor().command(cmd)
+                    .redirectOutput(new LogOutputStream() {
+                        @Override
+                        protected void processLine(String line) {
+                            System.out.println(line);
+                        }
+                    }).execute();
+            if(res.getExitValue() == 0){
+                System.out.println("스케줄러 정상 종료.");
+            } else {
+                System.out.println("스케줄러 비정상 종료.");
+            }
         } catch (IOException e) {
             throw new RuntimeException(e);
         } catch (InterruptedException e) {
